@@ -2,6 +2,7 @@ import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "
 import { useState } from "react";
 import Head from "next/head";
 import { AiOutlineSearch } from 'react-icons/ai';
+import Link from "next/link";
 
 import Navbar from "../components/Navbar";
 import Algolia from "../lib/algoliaService";
@@ -62,15 +63,22 @@ const Home = ({ newsConfig, news: newsData }: InferGetServerSidePropsType<typeof
             <div className={styles.newsRight}>
               {news.hits.map((n: INews) => {
                 return (
-                  <Card
+                  <Link
                     key={n.name}
-                    topics={n.topics}
-                    name={n.name}
-                    description={n.description}
-                    imageURL={n.imageUrl}
-                    organization={n.organization}
-                    publicationDate={n.publicationDate}
-                  />
+                    href={`/news/${encodeURIComponent(n.slug)}`}
+                    passHref={true}
+                  >
+                    <a>
+                      <Card
+                        topics={n.topics}
+                        name={n.name}
+                        description={n.description}
+                        imageURL={n.imageUrl}
+                        organization={n.organization}
+                        publicationDate={n.publicationDate}
+                      />
+                    </a>
+                  </Link>
                 );
               })}
             </div>
