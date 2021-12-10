@@ -1,6 +1,8 @@
-import React, { ReactElement } from 'react';
+import React, { ReactElement } from "react";
+import dayjs from "dayjs";
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-import styles from '../styles/Card.module.css';
+import styles from "../styles/Card.module.css";
 
 interface Props {
   topics: any[];
@@ -10,6 +12,8 @@ interface Props {
   organization: any[];
   imageURL: string;
 }
+
+dayjs.extend(customParseFormat);
 
 function Card({
   topics,
@@ -45,7 +49,7 @@ function Card({
         <div className={styles.cardName}>{name}</div>
         <p className={styles.cardDescription}>{description}</p>
         <div className={styles.cardFooter}>
-          <span className={styles.cardPublicationDate}>{publicationDate}</span>
+          <span className={styles.cardPublicationDate}>{dayjs(publicationDate).format('MMM DD, YYYY').toString()}</span>
           <div>
             {organization.map((org) => {
               return (
