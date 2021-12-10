@@ -1,6 +1,7 @@
-import { EntryCollection } from "contentful";
 import type { GetServerSideProps, InferGetServerSidePropsType, NextPage } from "next";
+import { useState } from "react";
 import Head from "next/head";
+import { AiOutlineSearch } from 'react-icons/ai';
 
 import Navbar from "../components/Navbar";
 import Algolia from "../lib/algoliaService";
@@ -10,7 +11,11 @@ import { INews, INewsConfig } from "../types";
 
 import styles from "../styles/Home.module.css";
 
-const Home = ({ newsConfig, news }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home = ({ newsConfig, news: newsData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [news, setNews] = useState(newsData);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const newsIndex = Algolia.initIndex('news');
 
   return (
     <div className={styles.container}>
@@ -30,7 +35,29 @@ const Home = ({ newsConfig, news }: InferGetServerSidePropsType<typeof getServer
           <div className={styles.newsContainer}>
             <div className={styles.newsLeft}>
               <span className={styles.searchLabel}>{newsConfig.searchLabel}</span>
-              <input type="text" />
+              <div className={styles.searchInput}>
+                <input
+                  className={styles.ogInput}
+                  type="text"
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button
+                  className={styles.searchButton}
+                  onClick={async () => {
+                    try {
+                      const res = await newsIndex.search(searchTerm);
+                      setNews(res);
+                    } catch (error) {
+                      // TODO - show a error toast.
+                      console.error(error); 
+                    }
+                  }}
+                >
+                  <AiOutlineSearch color={'white'} width={12} height={12} />
+                </button>
+              </div>
             </div>
             <div className={styles.newsRight}>
               {news.hits.map((n: INews) => {

@@ -38,6 +38,21 @@
   padding-left: 1rem;
 }
 
+.searchInput {
+  display: flex;
+}
+
+.ogInput {
+  padding: 7px 12px;
+  border: 1px solid gray;
+}
+
+.searchButton {
+  background-color: #0070f3;
+  padding: 7px 12px;
+  border: none;
+}
+
 .footer {
   display: flex;
   flex: 1;
