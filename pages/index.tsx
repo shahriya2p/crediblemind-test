@@ -10,8 +10,6 @@ import { INewsConfig } from "../types";
 import styles from "../styles/Home.module.css";
 
 const Home = ({ newsConfig, news }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  console.log(newsConfig.items[0]);
-  console.log(news);
 
   return (
     <div className={styles.container}>
@@ -23,15 +21,25 @@ const Home = ({ newsConfig, news }: InferGetServerSidePropsType<typeof getServer
 
       <main className={styles.main}>
         <Navbar
-          logoURL={newsConfig.items[0].fields.logo.fields.file.url}
-          menuLabel={newsConfig.items[0].fields.menuLabel}
+          logoURL={newsConfig.logo.fields.file.url}
+          menuLabel={newsConfig.menuLabel}
         />
+        <div className={styles.contentContainer}>
+          <h1 style={{ textAlign: 'center' }}>{newsConfig.ttile}</h1>
+          <div className={styles.newsContainer}>
+            <div className={styles.newsLeft}>
+              <span className={styles.searchLabel}>{newsConfig.searchLabel}</span>
+              <input type="text" />
+            </div>
+            <div className={styles.newsRight}>right</div>
+          </div>
+        </div>
       </main>
     </div>
   );
 };
 
-export const getServerSideProps: GetServerSideProps<{ newsConfig: EntryCollection<INewsConfig>, news: any }> = async () => {
+export const getServerSideProps: GetServerSideProps<{ newsConfig: INewsConfig, news: any }> = async () => {
   const newsConfig = await Contentful.getEntries<INewsConfig>({ content_type: 'newsConfig' });
   // TODO - Add type for news.
   const newsIndex = Algolia.initIndex('news');
@@ -39,7 +47,7 @@ export const getServerSideProps: GetServerSideProps<{ newsConfig: EntryCollectio
 
   return {
     props: {
-      newsConfig,
+      newsConfig: newsConfig.items[0].fields,
       news,
     },
   };

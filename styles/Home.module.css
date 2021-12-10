@@ -11,6 +11,33 @@
   flex-direction: column;
 }
 
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.newsContainer {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.newsLeft {
+  display: flex;
+  flex-direction: column;
+  padding-right: 1rem;
+}
+
+.searchLabel {
+  color: gray;
+  font-weight: 600;
+  margin-bottom: 0.9rem;
+}
+
+.newsRight {
+  grid-column: span 3 / span 3;
+  padding-left: 1rem;
+}
+
 .footer {
   display: flex;
   flex: 1;
