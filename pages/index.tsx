@@ -5,7 +5,8 @@ import Head from "next/head";
 import Navbar from "../components/Navbar";
 import Algolia from "../lib/algoliaService";
 import Contentful from "../lib/contentfulService";
-import { INewsConfig } from "../types";
+import Card from "../components/Card";
+import { INews, INewsConfig } from "../types";
 
 import styles from "../styles/Home.module.css";
 
@@ -31,7 +32,21 @@ const Home = ({ newsConfig, news }: InferGetServerSidePropsType<typeof getServer
               <span className={styles.searchLabel}>{newsConfig.searchLabel}</span>
               <input type="text" />
             </div>
-            <div className={styles.newsRight}>right</div>
+            <div className={styles.newsRight}>
+              {news.hits.map((n: INews) => {
+                return (
+                  <Card
+                    key={n.name}
+                    topics={n.topics}
+                    name={n.name}
+                    description={n.description}
+                    imageURL={n.imageUrl}
+                    organization={n.organization}
+                    publicationDate={n.publicationDate}
+                  />
+                );
+              })}
+            </div>
           </div>
         </div>
       </main>
@@ -39,6 +54,7 @@ const Home = ({ newsConfig, news }: InferGetServerSidePropsType<typeof getServer
   );
 };
 
+// News type is any since I can't find SearchResponse type from algoliasearch package.
 export const getServerSideProps: GetServerSideProps<{ newsConfig: INewsConfig, news: any }> = async () => {
   const newsConfig = await Contentful.getEntries<INewsConfig>({ content_type: 'newsConfig' });
   // TODO - Add type for news.
