@@ -3,6 +3,7 @@ import { useState } from "react";
 import Head from "next/head";
 import { AiOutlineSearch } from 'react-icons/ai';
 import Link from "next/link";
+import { Pagination } from "@mui/material";
 
 import Navbar from "../components/Navbar";
 import Algolia from "../lib/algoliaService";
@@ -15,6 +16,7 @@ import styles from "../styles/Home.module.css";
 const Home = ({ newsConfig, news: newsData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [news, setNews] = useState(newsData);
   const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
 
   const newsIndex = Algolia.initIndex('news');
 
@@ -48,7 +50,10 @@ const Home = ({ newsConfig, news: newsData }: InferGetServerSidePropsType<typeof
                   className={styles.searchButton}
                   onClick={async () => {
                     try {
-                      const res = await newsIndex.search(searchTerm);
+                      setPage(0);
+                      const res = await newsIndex.search(searchTerm, {
+                        page: 0,
+                      });
                       setNews(res);
                     } catch (error) {
                       // TODO - show a error toast.
@@ -83,6 +88,22 @@ const Home = ({ newsConfig, news: newsData }: InferGetServerSidePropsType<typeof
               })}
             </div>
           </div>
+          <div className={styles.paginationContainer}>
+            <Pagination
+              count={news.nbPages}
+              variant="outlined"
+              color="primary"
+              shape="rounded"
+              page={page + 1}
+              onChange={async (_, page: number) => {
+                setPage(page - 1);
+                const news = await newsIndex.search(searchTerm, {
+                  page: page - 1,
+                });
+                setNews(news);
+              }}
+            />
+          </div>
         </div>
       </main>
     </div>
@@ -94,7 +115,9 @@ export const getServerSideProps: GetServerSideProps<{ newsConfig: INewsConfig, n
   const newsConfig = await Contentful.getEntries<INewsConfig>({ content_type: 'newsConfig' });
   // TODO - Add type for news.
   const newsIndex = Algolia.initIndex('news');
-  const news = await newsIndex.search('');
+  const news = await newsIndex.search('', {
+    page: 0,
+  });
 
   return {
     props: {

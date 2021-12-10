@@ -53,6 +53,12 @@
   border: none;
 }
 
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .footer {
   display: flex;
   flex: 1;
